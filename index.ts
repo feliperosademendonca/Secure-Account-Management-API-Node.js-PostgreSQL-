@@ -1,14 +1,14 @@
+// ./index.ts
+import { router } from './router/routers.ts'; // Importando as rotas
 import express from "express";
-import type { Request, Response } from 'express';
 
 const app = express();
 
-let msg: string = 'mundo!';
-console.log(`Olá, ${msg}`);
+// Middleware para parsear o corpo da requisição (necessário para rotas POST)
+app.use(express.json());  // Adicionando o middleware para trabalhar com JSON
 
-app.get("/", (req: Request, res: Response) => {
-  res.send(`Rota index`);
-});
+// Usando o roteador no aplicativo
+app.use(router);  
 
 app.listen(3000, () => {
   console.log('Servidor TypeScript Rodando');
