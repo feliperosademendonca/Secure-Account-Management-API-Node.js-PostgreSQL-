@@ -1,5 +1,5 @@
 // ./index.ts
-import { router } from './router/routers.ts'; // Importando as rotas
+ import { router } from './router/routers.ts'; // Importando as rotas
 import express from "express";
 
 const app = express();
@@ -13,3 +13,4 @@ app.use(router);
 app.listen(3000, () => {
   console.log('Servidor TypeScript Rodando');
 });
+ 

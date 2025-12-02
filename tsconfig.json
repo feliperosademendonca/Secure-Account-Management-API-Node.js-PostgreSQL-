@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
     // File Layout
-    "module": "nodenext",  // Use "nodenext" para compatibilidade com ESM
-    "target": "esnext",    // Usando ESNext como alvo para sintaxe moderna
+    "module": "esnext", // Use "nodenext" para compatibilidade com ESM
+    "target": "esnext", // Usando ESNext como alvo para sintaxe moderna
     "types": [],
-    
+
     // Importar extensões TS
-    "allowImportingTsExtensions": true, 
+    "allowImportingTsExtensions": true,
 
     // Resolução de Módulos
-    "moduleResolution": "bundler",  // Para trabalhar com bundlers como ts-node
-    "noEmit": true,  // Impede a emissão de arquivos .js (se estiver usando ts-node)
+    "moduleResolution": "node", // Para trabalhar com bundlers como ts-node
+    "noEmit": true, // Impede a emissão de arquivos .js (se estiver usando ts-node)
 
     // Outras Configurações
     "sourceMap": true,
@@ -23,11 +23,17 @@
 
     // Estilo e Recomendações
     "strict": true,
-    "jsx": "react-jsx",  // Caso esteja usando React (mesmo não sendo o foco aqui)
+    "jsx": "react-jsx", // Caso esteja usando React (mesmo não sendo o foco aqui)
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    "rootDir": "./",
+    "outDir": "./dist",
+
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   }
 }
