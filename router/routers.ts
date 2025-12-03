@@ -17,6 +17,7 @@ router.get("/app", (req: Request, res: Response) => {
 router.post("/signup", (req: Request<{},{}, SignUpBody>, res: Response) => {
   //receber os dados no body do request 
   const reqBody:SignUpBody   = req.body
+  console.log("Dados recebidos no /signup:", reqBody);
   
   validator( reqBody)
 

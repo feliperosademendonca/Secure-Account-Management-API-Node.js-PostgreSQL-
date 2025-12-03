@@ -1,9 +1,11 @@
 interface SignUpBody {
     phone:string;
     name:string;
-    email:string;
+    email?:string;
     password:string;
-    id:string
+        confirmPassword?:string;
+
+    indicationId:string
 }
 
 export { SignUpBody }
