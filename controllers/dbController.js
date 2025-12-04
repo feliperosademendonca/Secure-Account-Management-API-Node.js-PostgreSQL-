@@ -1,12 +1,15 @@
 import db from "../repositories/database.js";
- export const createUser = (req   , res ) => {
-  const { name, phone, email, password } = req.body;
+
+const createUser = (req, res) => {
+  const { indicationId, name, phone, password } = req.body;
 
   const stmt = db.prepare(
-    "INSERT INTO users (name, phone, email, password) VALUES (?, ?, ?, ?)"
+    "INSERT INTO users (indicationId, name, phone, password) VALUES (?, ?, ?, ?)"
   );
 
-  const result = stmt.run(name, phone, email, password);
+  const result = stmt.run(indicationId, name, phone, password);
 
-  res.json({ id: result.lastInsertRowid });
+ return ({ id: result.lastInsertRowid });
 };
+
+export default createUser;
