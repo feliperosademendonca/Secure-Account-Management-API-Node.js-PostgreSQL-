@@ -1,8 +1,7 @@
 // src/pages/SignupPage.tsx
 import React, { useState } from 'react';
 import type { SignUpBody } from "../../../../types/express"
-import { validator } from "../utils/validator"
-const SignupPage: React.FC = () => {
+ const SignupPage: React.FC = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -26,17 +25,17 @@ const SignupPage: React.FC = () => {
       indicationId
     };
     // Exemplo de validação usando o validador importado
-    const retornoValidador: any = validator(signUpData)
-    console.log(retornoValidador ? "Dados válidos" : "Dados inválidos");
-
+ 
     const response =  await fetch("http://localhost:3000/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(signUpData)
     });
 
+    console.log("Resposta do servidor:", response);
+    
     if (response.ok) {
-      console.log("Cadastro realizado!");
+      console.log("\nCadastro realizado!");
     } else {
       console.error("Erro ao cadastrar");
     }

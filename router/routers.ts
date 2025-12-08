@@ -3,53 +3,23 @@ import express, { Router } from "express";
 import type { Request, Response } from 'express';
 import type { SignUpBody } from "../types/express"
 export const router = Router();
-import { validator } from "../validations/validator"
-import createUser from "../controllers/dbController.js";
-
+import { signUpSchema , loginSchema } from "../validations/inputsValidator.ts"
+import { createUserController } from "../controllers/userController.ts";
+import { validate } from "../middlewares/validateMiddleware.ts";
+import { login } from "../controllers/loginController.ts";
+ 
 router.get("/", (req: Request, res: Response) => {
   res.send(`Rota index`);
 });
 
-router.get("/app", (req: Request, res: Response) => {
-  //enviar para o cliente SPA da aplicação REACT
-  res.send(`Rota app test `);
+router.get("/app", (req: Request, res: Response) => {});
+
+router.post("/signup", validate(signUpSchema), createUserController);
+
+router.post("/login", login,(req: Request , res : Response ) =>{
+  console.log('req.body', req.body)
+    res.send (req.body)
 });
+router.post("/update", (req: Request, res: Response)=>{})
 
-router.post("/signup", async (req: Request<{}, {}, SignUpBody>, res: Response) => {
-  //receber os dados no body do request 
-  const reqBody: SignUpBody = req.body
-  console.log("Dados recebidos no /signup:", reqBody);
-
-  await validator(reqBody)
-  const returnCreateUser = await createUser(req, res)
-
-console.log("Resposta do /signup:", returnCreateUser);
-  res.send(returnCreateUser);
-});
-
-router.post("/login", (req: Request, res: Response) => {
-  //receber os dados no body do request
-
-  //validar os dados dentro das minhas regreas de negocio
-
-  //retornar para resposta do request "success" ou "error"
-  res.send();
-});
-
-router.post("/update", (req: Request, res: Response) => {
-  //receber os dados no body do request
-
-  //validar os dados dentro das minhas regreas de negocio
-
-  //retornar para resposta do request "success" ou "error"
-  res.send();
-});
-
-router.post("/recovery", (req: Request, res: Response) => {
-  //receber os dados no body do request
-
-  //validar os dados dentro das minhas regreas de negocio
-
-  //retornar para resposta do request "success" ou "error"
-  res.send();
-})
+router.post("/recovery", (req: Request, res: Response)=>{})

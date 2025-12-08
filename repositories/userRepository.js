@@ -1,33 +1,44 @@
 // ./repositories/userRepository.js
 import db from "./database.js";
 
+// Busca usuário por telefone
 export function findUserByPhone(phone) {
+  console.log("Procurando usuário com o telefone:", phone);
   const stmt = db.prepare("SELECT * FROM users WHERE phone = ?");
-  return stmt.get(phone); // retorna undefined se não achar
+  console.log(" stmt.get(phone):", stmt);
+  return stmt.get(phone);
 }
 
+// Busca usuário pela indicationId
 export function findUserByIndicationId(indicationId) {
+  console.log("Procurando usuário com o indicationId:", indicationId);
   const stmt = db.prepare("SELECT * FROM users WHERE indicationId = ?");
   return stmt.get(indicationId);
 }
 
-export function createUser(userData) {
- try {
-  const stmt = db.prepare(`
-    INSERT INTO users (indicationId, name, phone, email, password, pixKey, cpf)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `);
+// Cria usuário
+export function createUser({ indicationId, name, phone, email, password, pixKey, cpf }) {
+  console.log("Criando usuário com os dados:", { indicationId, name, phone, email, password, pixKey, cpf });
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO users (indicationId, name, phone, email, password, pixKey, cpf)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
 
-  const result = stmt.run(indicationId, name, phone, email, password, pixKey, cpf);
+    const result = stmt.run(
+      indicationId,
+      name,
+      phone,
+      email,
+      password,
+      pixKey,
+      cpf
+    );
 
-  res.json({ id: result.lastInsertRowid });
+    return { id: result.lastInsertRowid };
 
-} catch (err) {
-  if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
-    return res.status(400).json({ error: "Registro duplicado" });
+  } catch (err) {
+    // Quem captura isso é o SERVICE → error handling centralizado
+    throw err;
   }
-
-  return res.status(500).json({ error: "Erro interno no servidor" });
-}
-
 }

@@ -25,9 +25,8 @@ const emailSchema = Joi.string()
 
 
 const signUpSchema = Joi.object({
-  phone: Joi.string().min(11).max(15).required(),
+  phone: Joi.string().min(1).max(15).required(),
   name: Joi.string().min(6).required(),
-  email: emailSchema || null,
   password: Joi.string().min(6).required(),
 
   confirmPassword: Joi.any()
@@ -37,16 +36,16 @@ const signUpSchema = Joi.object({
       "any.only": "As senhas não conferem"
     }),
 
-  indicationId: Joi.string().required()
+  indicationId: Joi.string().min(6).required()
 });
 
 
 export async function validator(body: SignUpBody) {
-  console.log(body)
+ console.log(' Validando dados do usuário:', body);
   const { error, value } = signUpSchema.validate(body);
 
   if (error) {
-    throw new Error(error.message);
+    console.log("Validando dados do usuário:",Error(error.message));
   }
 
   // aqui entram regras de negócio
