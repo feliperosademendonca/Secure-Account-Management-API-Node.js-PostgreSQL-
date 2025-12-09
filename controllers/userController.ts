@@ -1,4 +1,8 @@
 // controllers/userController.js
+import { createUsersTable } from "../infra/migrations/createUsersTable.js";
+
+// Cria tabela ao iniciar
+await createUsersTable();
 import type { Request , Response, NextFunction }  from 'express';
 import type { SignUpBody } from "../types/express"
 

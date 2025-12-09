@@ -1,11 +1,16 @@
+import "./config/loadEnv.js";
+ import { createUsersTable } from "./infra/migrations/createUsersTable.ts";
+
+(async () => {
+  await createUsersTable();
+})();
 // ./index.ts
  import { router } from './router/routers.ts'; // Importando as rotas
 import express from "express";
 import cors from "cors";
 import errorHandler from "./middlewares/errorHandler.js";
-
 const app = express();
- 
+console.log('Variaveis de ambiente:',process.env.MSG)
 // CORS liberado para tudo
 app.use(cors({
   origin: "*",
