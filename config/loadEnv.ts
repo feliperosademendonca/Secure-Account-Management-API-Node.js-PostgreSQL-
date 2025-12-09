@@ -10,5 +10,5 @@ const envPath = path.resolve(__dirname, "../config/.env");
 
 dotenv.config({ path: envPath });
 
-console.log("Carregado .env de:", envPath);
-console.log("TESTE URI_POSTGRESQL:", process.env.URI_POSTGRESQL);
+console.log("\nCarregado .env de:", envPath);
+console.log("\nLoad .env:", process.env.MSG);

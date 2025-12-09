@@ -8,7 +8,7 @@ import "./config/loadEnv.js";
  import { router } from './router/routers.ts'; // Importando as rotas
 import express from "express";
 import cors from "cors";
-import errorHandler from "./middlewares/errorHandler.js";
+import errorHandler from "./middlewares/errorHandler.ts";
 const app = express();
 console.log('Variaveis de ambiente:',process.env.MSG)
 // CORS liberado para tudo
