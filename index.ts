@@ -1,36 +1,21 @@
-import "./config/loadEnv.js";
- import { createUsersTable } from "./infra/migrations/createUsersTable.ts";
+import "./src/config/loadEnv.js";
+
+import { app } from "./src/app.js";
+import { createUsersTable } from "./src/database/migrations/createUsersTable.ts";
 
 (async () => {
-  await createUsersTable();
+  try {
+    console.log("▶ Iniciando migrações...");
+    await createUsersTable();
+    console.log("✔ Migrações concluídas.");
+  } catch (error) {
+    console.error("❌ Erro ao executar migrações:", error);
+    process.exit(1);
+  }
+
+  const PORT = process.env.PORT || 3000;
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+  });
 })();
-// ./index.ts
- import { router } from './router/routers.ts'; // Importando as rotas
-import express from "express";
-import cors from "cors";
-import errorHandler from "./middlewares/errorHandler.ts";
-const app = express();
-console.log('Variaveis de ambiente:',process.env.MSG)
-// CORS liberado para tudo
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
-
-// Habilitar OPTIONS para qualquer rota (Express 5 requer "/*")
-app.use(cors('/*'));
-
-
-// Middleware para parsear o corpo da requisição (necessário para rotas POST)
-app.use(express.json());  // Adicionando o middleware para trabalhar com JSON
-
-// Usando o roteador no aplicativo
-app.use(router);  
-
-// este sempre por último
-app.use(errorHandler);
-app.listen(3000, () => {
-  console.log('Servidor TypeScript Rodando');
-});
- 

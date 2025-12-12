@@ -1,5 +1,5 @@
 // ./repositories/userRepository.ts
-import { query } from "../infra/connectionNeonPostgreSQL.js";
+import { query } from "../database/connectionNeonPostgreSQL";
 
 export interface CreateUserInput {
   indicationId: string;
@@ -59,13 +59,18 @@ export async function createUser(data: CreateUserInput) {
     indicationId,
     name,
     phone,
-    email || null,
+    email ?? null,
     password,
-    pixKey || null,
-    cpf || null,
+    pixKey ?? null,
+    cpf ?? null,
   ];
 
   const result = await query<{ id: number }>(sql, params);
 
-  return { id: result.rows[0].id };
+  const row = result.rows[0];
+  if (!row) {
+    throw new Error("Erro interno: Nenhum ID retornado pelo banco ao criar usuário.");
+  }
+
+  return { id: row.id };
 }

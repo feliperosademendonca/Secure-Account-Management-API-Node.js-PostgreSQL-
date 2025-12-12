@@ -3,7 +3,7 @@
     // File Layout
     "module": "esnext", // Use "nodenext" para compatibilidade com ESM
     "target": "esnext", // Usando ESNext como alvo para sintaxe moderna
-    "types": [],
+    "types": ["jest"],
 
     // Importar extensões TS
     "allowImportingTsExtensions": true,

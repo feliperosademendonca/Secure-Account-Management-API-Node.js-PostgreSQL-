@@ -12,14 +12,17 @@ router.get("/", (req: Request, res: Response) => {
   res.send(`Rota index`);
 });
 
-router.get("/app", (req: Request, res: Response) => {});
 
 router.post("/signup", validate(signUpSchema), createUserController);
 
 router.post("/login", login,(req: Request , res : Response ) =>{
   console.log('req.body', req.body)
-    res.send (req.body)
+  res.send (req.body)
 });
 router.post("/update", (req: Request, res: Response)=>{})
 
 router.post("/recovery", (req: Request, res: Response)=>{})
+
+router.get("/status", (req: Request, res: Response) => {
+  res.send('Status API: OK')
+});

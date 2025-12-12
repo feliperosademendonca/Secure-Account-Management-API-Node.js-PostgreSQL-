@@ -1,3 +1,4 @@
+//./src\database\migrations\createUsersTable.ts
 import { query } from "../connectionNeonPostgreSQL";
 
 export async function createUsersTable() {
