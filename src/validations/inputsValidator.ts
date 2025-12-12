@@ -22,7 +22,6 @@ const signUpSchema = z.object({
 
 const loginSchema  = z.object({
 
-    name: z.string().min(4).max(20),
     phone: z.string().min(10).max(15),
     password: z.string()
     .min(6, "Senha deve ter no mínimo 6 caracteres")
