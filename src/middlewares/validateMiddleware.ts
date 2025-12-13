@@ -1,11 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
-import type { ZodSchema } from "zod";
+import type { ZodObject } from "zod";
 
-export const validate =
-  (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction) => {
+ 
+export const validate = (schema: ZodObject) => (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req.body);
+        console.log("req.body:",req.body)
 
     if (!result.success) {
+      console.log("Erro de validação")
       return res.status(400).json({
         message: "Erro de validação",
         errors: result.error.format(),

@@ -1,29 +1,30 @@
 import { request } from "../helpers/testServer";
 import { clearUsersTable, insertIndicationUser } from "../helpers/setupTestDB";
 
- 
-beforeEach(async () => {
-  await clearUsersTable();
-});
+   beforeEach(async () => {
+      await clearUsersTable();
+    });
+
 
 describe("POST /signup", () => {
   it("deve cadastrar um usuário com sucesso", async () => {
     // garante que o código de indicação exista
     insertIndicationUser("ABC123");
+ 
 
     const response = await request.post("/signup").send({
-      name: "Felipe",
-      phone: "11999999990",
-      password: "senha123",
-      confirmPassword: "senha123",
+      name: "teste1",
+      phone: "32987542154",
+      password: "123456",
+      confirmPassword: "123456",
       indicationId: "ABC123",
     });
-   
+
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("id");
   });
 
-   it("deve retornar que falta o nome", async () => {
+  it("deve retornar que falta o nome", async () => {
     // garante que o código de indicação exista
     insertIndicationUser("ABC123");
 
@@ -35,11 +36,11 @@ describe("POST /signup", () => {
       indicationId: "ABC123",
     });
 
-       expect(response.body).toHaveProperty("message");
- 
+    expect(response.body).toHaveProperty("message");
+
   });
 
-    it("deve retornar erro de telefone invalido ou ausente", async () => {
+  it("deve retornar erro de telefone invalido ou ausente", async () => {
     // garante que o código de indicação exista
     insertIndicationUser("ABC123");
 
@@ -50,13 +51,13 @@ describe("POST /signup", () => {
       confirmPassword: "senha123",
       indicationId: "ABC123",
     });
- 
+
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("errors");
- 
+
   });
 
-    it("deve retornar erro Senhas não corresponden", async () => {
+  it("deve retornar erro Senhas não corresponden", async () => {
     // garante que o código de indicação exista
     insertIndicationUser("ABC123");
 
@@ -67,13 +68,13 @@ describe("POST /signup", () => {
       confirmPassword: "senha123",
       indicationId: "ABC123",
     });
- 
+
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("errors");
- 
+
   });
 
-     it("deve retornar erro Id Inválido ou Ausente", async () => {
+  it("deve retornar erro Id Inválido ou Ausente", async () => {
     // garante que o código de indicação exista
     insertIndicationUser("ABC123");
 
@@ -84,44 +85,49 @@ describe("POST /signup", () => {
       confirmPassword: "senha123",
       indicationId: "",
     });
- 
+
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("errors");
- 
+
   });
 });
 
- describe("POST /login", () => {
-  it("deve retornar sucesso no login", async () => {
- 
 
+describe("POST /login", () => {
+
+  const user = {
+    name: "teste10",
+    phone: "32987542154",
+    password: "123456",
+    confirmPassword: "123456",
+    indicationId: "ABC123",
+  };
+
+  beforeAll(async () => {
+    await clearUsersTable();           // garante estado limpo
+    insertIndicationUser("ABC123");    // garante dependência
+    await request.post("/signup").send(user);
+  });
+
+  it("deve retornar sucesso no login", async () => {
     const response = await request.post("/login").send({
-  
-      phone: "11999999990",
-      password: "senha123",
-      
+      phone: user.phone,
+      password: user.password,
     });
-    console.log('response login:',response.body)
-     
+
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("id");
   });
 
-   it("deve retornar erro de login ", async () => {
- 
-
+  it("deve retornar erro de login", async () => {
     const response = await request.post("/login").send({
-  
       phone: "",
       password: "123456A@",
-      
     });
 
-     
     expect(response.status).toBe(400);
-   });
+  });
 
-
- 
 });
+
 
