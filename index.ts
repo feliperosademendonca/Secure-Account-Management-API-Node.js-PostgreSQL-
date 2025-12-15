@@ -1,7 +1,10 @@
 import "./src/config/loadEnv.js";
+import cookieParser from "cookie-parser";
 
 import { app } from "./src/app.js";
 import { createUsersTable } from "./src/database/migrations/createUsersTable.ts";
+
+ app.use(cookieParser());
 
 (async () => {
   try {

@@ -1,10 +1,11 @@
+//./src\middlewares\validateMiddleware.ts
 import type { NextFunction, Request, Response } from "express";
 import type { ZodObject } from "zod";
 
  
 export const validate = (schema: ZodObject) => (req: Request, res: Response, next: NextFunction) => {
-    const result = schema.safeParse(req.body);
-        console.log("req.body:",req.body)
+     const result = schema.safeParse(req.body);
+      console.log("\nvalidate",req.body ," Schema:",result)
 
     if (!result.success) {
       console.log("Erro de validação")

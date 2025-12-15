@@ -1,7 +1,7 @@
 // src/pages/SignupPage.tsx
 import React, { useState } from 'react';
-import type { loginBody } from "../../../../types/express"
- const LoginPage: React.FC = () => {
+import type { LoginBody } from "../../../types/bodies"
+const LoginPage: React.FC = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -17,20 +17,22 @@ import type { loginBody } from "../../../../types/express"
     console.log('Confime a senha:', confirmPassword);
     console.log('id:', indicationId);
 
-    const loginData: loginBody = {
+    const loginData: LoginBody = {
       phone,
       password
     };
     // Exemplo de validação usando o validador importado
- 
-    const response =  await fetch("http://localhost:3000/login", {
+
+
+    const response = await fetch("http://localhost:3000/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(loginData)
+      credentials: "include", // 🔥 obrigatório
+      body: JSON.stringify(loginData),
     });
 
     console.log("Resposta do servidor:", response);
-    
+
     if (response.ok) {
       console.log("\nLogin realizado!");
     } else {
@@ -41,9 +43,9 @@ import type { loginBody } from "../../../../types/express"
 
   return (
     <div className="container">
-      <h2>Cadastro</h2>
+      <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-   
+
 
         <label>Whatsapp
           <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required />
@@ -52,13 +54,13 @@ import type { loginBody } from "../../../../types/express"
         <label>Senha
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
- 
-        <button type="submit">Cadastrar</button>
+
+        <button type="submit">Login</button>
       </form>
 
     </div>
   );
 };
 
- 
+
 export default LoginPage;

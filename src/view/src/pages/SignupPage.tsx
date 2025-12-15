@@ -1,6 +1,6 @@
 // src/pages/SignupPage.tsx
 import React, { useState } from 'react';
-import type { SignUpBody } from "../../../../types/express"
+import type { SignUpBody } from "../../../types/bodies"
  const SignupPage: React.FC = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');

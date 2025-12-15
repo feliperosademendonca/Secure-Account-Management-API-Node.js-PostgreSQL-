@@ -1,5 +1,6 @@
 // ./repositories/userRepository.ts
 import { query } from "../database/connectionNeonPostgreSQL";
+import type { UpdateBody } from "../types/bodies";
 
 export interface CreateUserInput {
   indicationId: string;
@@ -13,6 +14,8 @@ export interface CreateUserInput {
 
 // Buscar usuário por telefone
 export async function findUserByPhone(phone: string) {
+
+  console.log('\nphone recebido em findUserByPhone:', phone)
   const sql = `
     SELECT *
     FROM users
@@ -21,7 +24,7 @@ export async function findUserByPhone(phone: string) {
   `;
 
   const result = await query(sql, [phone]);
-  return result.rows[0] || null;
+   return result.rows[0] || null;
 }
 
 // Buscar usuário por indicationId
@@ -56,7 +59,7 @@ export async function createUser(data: CreateUserInput) {
   `;
 
   const params = [
-    indicationId,
+    indicationId ?? '123456',
     name,
     phone,
     email ?? null,
@@ -72,5 +75,42 @@ export async function createUser(data: CreateUserInput) {
     throw new Error("Erro interno: Nenhum ID retornado pelo banco ao criar usuário.");
   }
 
-  return { id: row.id };
+  return { id: row };
+}
+
+// Atualizar usuário pelo ID (JWT)
+export async function updateUserById(  userId: string,  data: UpdateBody) {
+  
+  const fields: string[] = [];
+  const values: any[] = [];
+  let index = 1;
+
+  if (data.name) {
+    fields.push(`name = $${index++}`);
+    values.push(data.name);
+  }
+
+  if (data.phone) {
+    fields.push(`phone = $${index++}`);
+    values.push(data.phone);
+  }
+
+  if (data.password) {
+    fields.push(`password = $${index++}`);
+    values.push(data.password);
+  }
+
+  if (fields.length === 0) {
+    throw new Error("Nenhum campo para atualizar");
+  }
+
+  values.push(userId);
+
+  const sql = `
+    UPDATE users
+    SET ${fields.join(", ")}
+    WHERE id = $${index}
+  `;
+
+  await query(sql, values);
 }

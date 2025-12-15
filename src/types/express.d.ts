@@ -1,15 +1,13 @@
-//./src\types\express.d.ts
- 
 import "express";
-import type { SignUpBody, loginBody } from "./express-types"; // ajuste se necessário
+import { SignUpBody, LoginBody, UpdateBody } from "./bodies";  // Importando os tipos
 
 declare global {
   namespace Express {
     interface Request {
-      validatedBody?: SignUpBody | loginBody;
+      validatedBody?: SignUpBody | LoginBody | UpdateBody | recoveryData; // Usando os tipos importados
+      user?: { id: string };  // Para garantir que o ID do usuário seja extraído do JWT
     }
   }
 }
 
-
-export { SignUpBody , loginBody }
+export {};

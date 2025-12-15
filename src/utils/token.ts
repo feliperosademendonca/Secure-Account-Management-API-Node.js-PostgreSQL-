@@ -1,0 +1,7 @@
+//./src/utils/token.ts
+
+import crypto from "crypto";
+
+export function generateRecoveryCode(): string {
+    return crypto.randomInt(100000, 999999).toString();
+}

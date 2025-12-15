@@ -1,3 +1,4 @@
+//./tests\helpers\setupTestDB.ts
 import db from "../../src/repositories/database"; // Pool do pg
 
 export const clearUsersTable = async () => {
