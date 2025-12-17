@@ -6,8 +6,9 @@ import type { JwtPayload } from "jsonwebtoken";
 const SECRET_KEY = process.env.JWT_SECRET!;
 
 export function authenticateJWT(req: Request, res: Response, next: NextFunction) {
+  console.log("Autenticando JWT...");
   const token = req.cookies?.token;
-  console.log("cookies:", req.cookies);
+  console.log("cookies:", req.cookies.token);
   console.log("user:", req.user);
 
   console.log("Token:", token ? "SIM" : "NÃO")

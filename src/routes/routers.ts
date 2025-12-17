@@ -6,7 +6,7 @@ import { authenticateJWT } from "../middlewares/jwt";
 
 export const router = Router();
 import { signUpSchema , loginSchema , updateUserSchema , recoveryUserSchema} from "../validations/inputsValidator.ts"
-import { createUserController , updateUserController  , loginController , recoveryUserController } from "../controllers/userController.ts";
+import { createUserController , updateUserController  , loginController , recoveryUserController, listAllUserController } from "../controllers/userController.ts";
 import { validate } from "../middlewares/validateMiddleware.ts";
    
 router.get("/", (req: Request, res: Response) => {
@@ -17,12 +17,16 @@ router.post("/signup", validate(signUpSchema), createUserController);
 
 router.post("/login", validate(loginSchema) ,loginController);
 
-router.patch("/update", authenticateJWT, validate(updateUserSchema ),   authenticateJWT,  updateUserController)
+router.patch("/update", authenticateJWT, validate(updateUserSchema ),  updateUserController)
 
 router.post("/recovery", validate(recoveryUserSchema ), recoveryUserController)
+
+router.get("/allusers", authenticateJWT, listAllUserController);
 
 router.get("/status", (req: Request, res: Response) => {
   res.send('Status API: OK')
 });
+
+
 
 

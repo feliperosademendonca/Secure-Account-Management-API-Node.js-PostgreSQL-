@@ -1,7 +1,7 @@
 // controllers/userController.ts
 import type { Request, Response, NextFunction } from "express";
 import type { SignUpBody, UpdateBody, recoveryBody } from "../types/bodies";
-import { findUserByPhone, findUserByIndicationId, createUser, updateUserById } from "../repositories/userRepository";
+import { findUserByPhone, findUserByIndicationId, createUser, updateUserById , findallUser } from "../repositories/userRepository";
 import { updateUserSchema, recoveryUserSchema } from "../validations/inputsValidator";
 import { recoveryAccount } from "../services/recoveryAccount"
 import bcrypt from "bcryptjs";
@@ -46,46 +46,47 @@ export const createUserController = async (req: Request, res: Response, next: Ne
   }
 };
 
-export const loginController = async (req: Request, res: Response, next: NextFunction) => {
-  console.log('loginController req.body:', req.body)
+export const loginController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log("loginController req.body:", req.body);
+
   try {
-    const data = loginSchema.parse(req.body); // validação
+    // ✅ Validação do input
+    const data = loginSchema.parse(req.body);
     const { phone, password } = data;
 
+    // 🔍 Busca usuário
     const user = await findUserByPhone(phone);
 
-    console.log('return user:', user)
+    // ❌ Usuário não existe
+    if (!user) {
+      return res.status(401).json({ error: "Credenciais inválidas" });
+    }
+
+    // 🔐 Valida senha
     const isValid = await bcrypt.compare(password, user.password);
-    console.log('isValid:', isValid)
 
     if (!isValid) {
-      return res.status(400).json({ error: "Credenciais inválidas" });
+      return res.status(401).json({ error: "Credenciais inválidas" });
     }
 
-    if (!user) {
-      console.log('Usuario não localizado')
-
-      return res.status(400).json({ error: "Credenciais inválidas" });
-    }
-
-
-    console.log("Login realizado com sucesso")
-
-
-    // 🔐 AQUI o token nasce
+    // 🔐 Gera token
     const token = jwt.sign(
       { id: user.id },
       process.env.JWT_SECRET!,
       { expiresIn: "1h" }
     );
-    // 🍪 AQUI ele é armazenado
+
+    // 🍪 Armazena token de forma segura
     res.cookie("token", token, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,           // ✅ proteção XSS
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 1000,
     });
-
 
     return res.status(200).json({
       message: "Login realizado com sucesso",
@@ -97,30 +98,38 @@ export const loginController = async (req: Request, res: Response, next: NextFun
 };
 
 export const updateUserController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // 🔐 ID vem exclusivamente do JWT
+    const userId = req.user?.id as string;
+    console.log("updateUserController userId do JWT:", userId);
 
-  const userId = req.user?.id as string; // 🔥 vem do JWT
+    // ✅ Validação do body
+    const data = updateUserSchema.parse(req.body);
+    console.log("updateUserController data:", data);
 
+    // 🔒 Só gera hash se o usuário enviou senha
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
 
-  const data = updateUserSchema.parse(req.body);
+    console.log("data para atualizar cadastro:", data);
 
-  const passwordHash = await bcrypt.hash(data.password, 10);
+    // 🧨 Atualiza no banco
+    const updatedUser = await updateUserById(userId, data);
 
-  console.log('passwordHash:', passwordHash)
+    console.log("Usuário atualizado:", updatedUser);
 
-  data.password = passwordHash
-
-  console.log('data para atualizar cadastro:', data)
-
-  return res.status(200).json({
-    message: "Usuário atualizado com sucesso",
-  });
+    return res.status(200).json({
+      message: "Usuário atualizado com sucesso",
+      id: updatedUser.id,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const recoveryUserController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const recoveryUserController = async (req: Request, res: Response, next: NextFunction) => {
+
   try {
     const { phone } = req.validatedBody as recoveryBody;
 
@@ -136,4 +145,26 @@ export const recoveryUserController = async (
   }
 };
 
+export const listAllUserController = async (  req: Request,  res: Response,  next: NextFunction) => {
+  
+  console.log("listAllUserController");
+
+  try {
+  
+    const users = await findallUser();
+
+    // ❌ Usuário não existe
+    if (!users) {
+      return res.status(401).json({ error: "Nenhum usuário encontrado" });
+    }
+  
+
+    return res.status(200).json({
+      message: "Lista de Usuarios",
+      users: users,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 

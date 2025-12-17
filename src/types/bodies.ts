@@ -15,7 +15,7 @@ export interface LoginBody {
 }
 
 export interface UpdateBody {
-  name?: string;
+   name?: string;
   phone?: string;
   password?: string;
   confirmPassword?: string;

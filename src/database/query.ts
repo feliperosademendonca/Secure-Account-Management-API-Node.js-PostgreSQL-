@@ -1,8 +1,12 @@
-// ./src/database/connectionNeonPostgreSQL.ts
+// src/database/query.ts 
 
-import { type QueryResult, type QueryResultRow } from "pg";
-import { pool } from "./connection";
+import { Pool, type QueryResult, type QueryResultRow } from "pg";
+import { env } from "../config/env";
 
+// Cria o pool de conexões
+export const pool = new Pool({
+  connectionString: env.URI_POSTGRESQL,
+});
 
 // Função padrão de queries (boa prática)
 export async function query<

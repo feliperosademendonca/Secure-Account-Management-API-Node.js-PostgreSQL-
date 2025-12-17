@@ -1,5 +1,5 @@
 //./src\database\migrations\createUsersTable.ts
-import { query } from "../connectionNeonPostgreSQL";
+import { query } from "../query";
 
 export async function createUsersTable() {
   await query(`
@@ -14,7 +14,10 @@ export async function createUsersTable() {
       cpf TEXT UNIQUE,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
+
+    
   `);
+  
 
   console.log("Tabela 'users' verificada/criada com sucesso");
 }

@@ -1,22 +1,25 @@
 // src/pages/SignupPage.tsx
 import React, { useState } from 'react';
 import type { LoginBody } from "../../../types/bodies"
+import { LoadingButton } from "../components/LoadingButton";
+import Modal from '../components/Modal';
+
 const LoginPage: React.FC = () => {
-  const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setconfirmPassword] = useState('');
-  const [indicationId, setIndicationId] = useState('');
+  const [isLoging, setIsLoging] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const handleSubmit = async (event: React.FormEvent) => {
+
     event.preventDefault();
+
+    setIsLoging(true);
+
     // Aqui você pode adicionar lógica de cadastro (exemplo de console log)
-    console.log('Usuário:', name);
     console.log('whatsapp:', phone);
     console.log('Senha :', password);
-    console.log('Confime a senha:', confirmPassword);
-    console.log('id:', indicationId);
-
     const loginData: LoginBody = {
       phone,
       password
@@ -34,9 +37,16 @@ const LoginPage: React.FC = () => {
     console.log("Resposta do servidor:", response);
 
     if (response.ok) {
+
       console.log("\nLogin realizado!");
+      setIsLoging(false);
+      setModalMessage("Login realizado!");
+      setModalOpen(true);
+
     } else {
       console.error("Erro ao realizar login.");
+      setModalMessage("Erro ao realizar login - verifique os dados informados.");
+      setModalOpen(true);
     }
 
   };
@@ -55,9 +65,28 @@ const LoginPage: React.FC = () => {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
 
-        <button type="submit">Login</button>
+        <LoadingButton
+          type="submit"
+          className=""
+          loadingText="Logando..."
+          onClick={handleSubmit}
+        >
+          Login
+        </LoadingButton>
       </form>
-
+      
+      <Modal
+        open={modalOpen}
+        title="Aviso"
+        onClose={() => setModalOpen(false)}
+        footer={
+          <button onClick={() => setModalOpen(false)}>
+            Ok
+          </button>
+        }
+      >
+        <p>{modalMessage}</p>
+      </Modal>
     </div>
   );
 };
