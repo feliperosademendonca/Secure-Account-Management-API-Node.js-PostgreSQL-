@@ -1,7 +1,7 @@
 
 // src/pages/UpdatePage.tsx
 import React, { useState } from 'react';
-import type { UpdateBody } from "../../../types/bodies"
+import type { UpdateBody  } from "../../../types/bodies"
 import { LoadingButton } from "../components/LoadingButton";
 import Modal from '../components/Modal';
 
@@ -19,6 +19,7 @@ const UpdatePage: React.FC = () => {
     event.preventDefault();
     setIsUpdating(true);
 
+  const profileData: UpdateBody = { name, phone };
 
     const updateData: UpdateBody = {
       name,
@@ -28,7 +29,7 @@ const UpdatePage: React.FC = () => {
     };
 
     const response = await fetch("http://localhost:3000/update", {
-      method: "PATCH",
+      method: "put",
       headers: { "Content-Type": "application/json" },
       credentials: "include", // 🔥 envia cookie
       body: JSON.stringify(updateData),

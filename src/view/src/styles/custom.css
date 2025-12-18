@@ -1,0 +1,19 @@
+/* src/styles/custom.css */
+
+.user-layout {
+  margin-top: 2rem;
+}
+
+.user-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* Link ativo */
+.user-nav a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+

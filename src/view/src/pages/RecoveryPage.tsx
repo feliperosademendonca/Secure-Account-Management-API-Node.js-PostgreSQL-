@@ -1,6 +1,6 @@
 // src/pages/SignupPage.tsx
 import React, { useState } from 'react';
-import type { recoveryBody } from "../../../types/bodies"
+import type { RecoveryBody } from "../../../types/bodies"
 import { LoadingButton } from "../components/LoadingButton";
 import Modal from '../components/Modal';
 
@@ -17,7 +17,7 @@ function RecoveryPage() {
     // Aqui você pode adicionar lógica de cadastro (exemplo de console log)
     console.log('whatsapp:', phone);
 
-    const recoveryData: recoveryBody = { phone };
+    const recoveryData: RecoveryBody = { phone };
     // Exemplo de validação usando o validador importado
 
     const response = await fetch("http://localhost:3000/recovery", {
