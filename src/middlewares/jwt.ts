@@ -13,6 +13,7 @@ export function authenticateJWT(req: Request, res: Response, next: NextFunction)
 
   console.log("Token:", token ? "SIM" : "NÃO")
   if (!token) {
+    console.log("Não autenticado,Token não fornecido");
     return res.status(401).json({ message: "Não autenticado" });
   }
 

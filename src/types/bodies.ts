@@ -14,15 +14,19 @@ export interface LoginBody {
   password: string;
 }
 
-export interface UpdateBody {
-   name?: string;
+/** 🔹 Atualização de dados públicos do perfil */
+export interface UpdateProfileBody {
+  name?: string;
   phone?: string;
-  password?: string;
-  confirmPassword?: string;
+  email?: string;
 }
 
+/** 🔐 Atualização de senha (rota separada) */
+export interface UpdatePasswordBody {
+  password: string;
+  confirmPassword: string;
+}
 
-export interface recoveryBody {
-   phone: string;
- }
-
+export interface RecoveryBody {
+  phone: string;
+}

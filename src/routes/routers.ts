@@ -1,27 +1,31 @@
 //./router/routers.ts
 import express, { Router } from "express";
 import type { Request, Response } from 'express';
-import type { SignUpBody , UpdateBody}  from "../types/bodies";
-import { authenticateJWT } from "../middlewares/jwt";
+ import { authenticateJWT } from "../middlewares/jwt";
 
 export const router = Router();
-import { signUpSchema , loginSchema , updateUserSchema , recoveryUserSchema} from "../validations/inputsValidator.ts"
-import { createUserController , updateUserController  , loginController , recoveryUserController, listAllUserController } from "../controllers/userController.ts";
+import { signUpSchema, loginSchema, updatePasswordSchema, updateProfileSchema, recoveryUserSchema } from "../validations/inputsValidator.ts"
+import { UserController } from "../controllers/userController.ts";
 import { validate } from "../middlewares/validateMiddleware.ts";
-   
+const userController = new UserController();
+
 router.get("/", (req: Request, res: Response) => {
   res.send(`Rota index`);
 });
 
-router.post("/signup", validate(signUpSchema), createUserController);
+router.post("/signup", validate(signUpSchema), userController.create);
 
-router.post("/login", validate(loginSchema) ,loginController);
+router.post("/login", validate(loginSchema), userController.login);
+ 
+router.put("/user/profile", authenticateJWT, validate(updateProfileSchema), userController.updateProfile);
 
-router.patch("/update", authenticateJWT, validate(updateUserSchema ),  updateUserController)
+router.put("/user/password", authenticateJWT, validate(updatePasswordSchema), userController.updatePassword);
 
-router.post("/recovery", validate(recoveryUserSchema ), recoveryUserController)
+router.post("/recovery", validate(recoveryUserSchema), userController.recovery)
 
-router.get("/allusers", authenticateJWT, listAllUserController);
+router.get("/allusers", authenticateJWT, userController.listAllUsers);
+
+router.get("/logout", authenticateJWT, userController.logout);
 
 router.get("/status", (req: Request, res: Response) => {
   res.send('Status API: OK')

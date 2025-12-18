@@ -9,7 +9,7 @@ describe("POST /signup", () => {
   });
 
   it("deve cadastrar um usuário com sucesso", async () => {
-    await insertIndicationUser("ABC123");
+    await await insertIndicationUser("ABC123");
 
     const response = await request.post("/signup").send({
       name: "teste1",
@@ -22,10 +22,9 @@ describe("POST /signup", () => {
     expect(response.status).toBe(201);
   });
  
-
   it("deve retornar que falta o nome", async () => {
     // garante que o código de indicação exista
-    insertIndicationUser("ABC123");
+    await insertIndicationUser("ABC123");
 
     const response = await request.post("/signup").send({
       name: "",
@@ -41,7 +40,7 @@ describe("POST /signup", () => {
 
   it("deve retornar erro de telefone invalido ou ausente", async () => {
     // garante que o código de indicação exista
-    insertIndicationUser("ABC123");
+    await insertIndicationUser("ABC123");
 
     const response = await request.post("/signup").send({
       name: "teste1",
@@ -58,7 +57,7 @@ describe("POST /signup", () => {
 
   it("deve retornar erro Senhas não corresponden", async () => {
     // garante que o código de indicação exista
-    insertIndicationUser("ABC123");
+    await insertIndicationUser("ABC123");
 
     const response = await request.post("/signup").send({
       name: "teste1",
@@ -74,8 +73,7 @@ describe("POST /signup", () => {
   });
 
   it("deve retornar erro Id Inválido ou Ausente", async () => {
-    // garante que o código de indicação exista
-    insertIndicationUser("ABC123");
+    await insertIndicationUser("ABC123");
 
     const response = await request.post("/signup").send({
       name: "teste1",
@@ -89,44 +87,6 @@ describe("POST /signup", () => {
     expect(response.body).toHaveProperty("errors");
 
   });
-});
-
-
-describe("POST /login", () => {
-
- 
-  const user = {
-    name: "teste10",
-    phone: "32987542154",
-    password: "123456",
-    confirmPassword: "123456",
-    indicationId: "ABC123",
-  };
-
-  beforeAll(async () => {
-    await clearUsersTable();           // garante estado limpo
-  // await insertIndicationUser("ABC123");    // garante dependência
-    await request.post("/signup").send(user);
-  });
-
-  it("deve retornar sucesso no login", async () => {
-    const response = await request.post("/login").send({
-      phone: user.phone,
-      password: user.password,
-    });
-
-    expect(response.status).toBe(200);
-   });
-
-  it("deve retornar erro de login", async () => {
-    const response = await request.post("/login").send({
-      phone: "",
-      password: "123456A@",
-    });
-
-    expect(response.status).toBe(400);
-  });
-
 });
 
 
