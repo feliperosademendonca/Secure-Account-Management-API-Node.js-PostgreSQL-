@@ -1,13 +1,8 @@
 // src/repositories/recoveryRepository.ts
 import { query } from "../database/query";
-import type{  RecoveryTokenRow ,SaveRecoveryTokenParams} from "./types";
+import type { RecoveryTokenRow, SaveRecoveryTokenParams } from "./types";
 
 
-
-
-/**
- * Salva um novo token de recuperação
- */
 export async function saveRecoveryToken({
   userId,
   tokenHash,
@@ -47,9 +42,6 @@ export async function findValidRecoveryToken(
   return result.rows[0] ?? null;
 }
 
-
-
-
 export async function findRecoveryTokenByUser(userId: number) {
   const result = await query(
     `
@@ -79,7 +71,6 @@ export async function markRecoveryTokenAsUsed(tokenId: number) {
   );
 }
 
- 
 export async function findValidRecoveryTokenByHash(
   tokenHash: string
 ): Promise<RecoveryTokenRow | null> {

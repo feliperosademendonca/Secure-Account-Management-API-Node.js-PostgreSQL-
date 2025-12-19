@@ -9,4 +9,33 @@ A aplicação simula um sistema financeiro real, utilizando:
 - Regras explícitas para depósitos e saques
 - Código organizado com foco em domínio e manutenibilidade
 
-O objetivo é demonstrar **capacidade de design de sistemas**, não apenas implementação de CRUD.
+O objetivo é praticar a **capacidade de design de sistemas**, não apenas implementação de CRUD.
+
+
+
+
+src/
+├── domain/
+│   └── finance/
+│        ├── entities/
+│        ├── value-objects/
+│        ├── rules/
+│        └── types.ts
+│
+├── application/
+│   ├── contracts/
+│   │    └── LedgerRepository.ts
+│   └── services/
+│        └── FinancialApplicationService.ts
+│
+├── infrastructure/
+│   └── postgres/
+│        └── PostgresLedgerRepository.ts
+│
+├── database/
+│   └── query.ts
+│
+├── controllers/
+│   └── financeController.ts
+│
+└── server.ts

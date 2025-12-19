@@ -165,3 +165,17 @@ Pix (Asaas)
 notificação por email
 
 subdomínios efêmeros (seu outro projeto)
+
+
+1️⃣ Transação Postgres (BEGIN / COMMIT)
+
+Garantir atomicidade em cenários concorrentes
+(ex: dois saques simultâneos)
+
+2️⃣ Read Model de Saldo
+
+Separar leitura de escrita sem quebrar o domínio
+
+3️⃣ Idempotência (PIX / webhooks)
+
+Evitar crédito duplicado

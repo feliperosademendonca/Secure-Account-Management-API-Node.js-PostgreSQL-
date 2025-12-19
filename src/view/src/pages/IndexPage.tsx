@@ -2,11 +2,11 @@
 
 function IndexPage() {
   return (
-    <div>
+    <div className="">
       <hr />
       <h1>Plataforma Financeira - Projeto de Portfólio Técnico</h1>
       {/* Conteúdo da página de atualização */}
-      <section>
+      <section className={"container-fluid"}>
         <hr />
         <h2>📚 Sobre o projeto</h2>
         <p>
