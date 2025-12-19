@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
 import "./styles/custom.css";
 
+import MainMenu from "./components/Header";
 import IndexPage from "./pages/IndexPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
@@ -14,12 +15,8 @@ import Logout from "./pages/Logout";
 function App() {
   return (
     <BrowserRouter>
-
-      <Link to="/">Index</Link>
-      <Link to="/signup">signup</Link>
-      <Link to="/login">Login</Link>
-      <Link to="/Logout">Logout</Link>
-
+      
+    <MainMenu />
 
       <Routes>
 
