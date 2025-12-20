@@ -3,6 +3,7 @@
 import { LedgerEntry } from "../entities/LedgerEntry";
 import { Money } from "../value-objects/Money";
 import { calculateBalance } from "./calculateBalance";
+import { TransactionType } from "../types";
 
 export function createWithdraw(params: {
   id: string;
@@ -23,9 +24,9 @@ export function createWithdraw(params: {
   return new LedgerEntry(
     params.id,
     params.accountId,
-    "DEBIT",
+    TransactionType.WITHDRAW,
     params.amount,
     new Date()
   );
 }
-    
+

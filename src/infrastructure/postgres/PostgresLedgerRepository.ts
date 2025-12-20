@@ -1,10 +1,9 @@
-//./src/infrastructure/postgres/PostgresLedgerRepository.ts
-
 import type { LedgerRepository } from "../../application/contracts/LedgerRepository";
 import { LedgerEntry } from "../../domain/finance/entities/LedgerEntry";
 import { Money } from "../../domain/finance/value-objects/Money";
-import { query } from "../../database/query";
 import type { TransactionType } from "../../domain/finance/types";
+import type { DbExecutor } from "../../database/DbExecutor";
+import { dbExecutor } from "../../database/query";
 
 type LedgerRow = {
   id: string;
@@ -15,22 +14,20 @@ type LedgerRow = {
 };
 
 export class PostgresLedgerRepository
-  implements LedgerRepository
-{
+  implements LedgerRepository {
+
   async findByAccountId(
-    accountId: string
+    accountId: string,
+    executor: DbExecutor = dbExecutor
   ): Promise<LedgerEntry[]> {
-    const result = await query<LedgerRow>(
+
+    const result = await executor.query<LedgerRow>(
       `
-      SELECT 
-        id,
-        account_id,
-        type,
-        amount,
-        created_at
+      SELECT id, account_id, type, amount, created_at
       FROM ledger_entries
       WHERE account_id = $1
       ORDER BY created_at ASC
+      FOR UPDATE
       `,
       [accountId]
     );
@@ -47,15 +44,15 @@ export class PostgresLedgerRepository
     );
   }
 
-  async save(entry: LedgerEntry): Promise<void> {
-    await query(
+  async save(
+    entry: LedgerEntry,
+    executor: DbExecutor = dbExecutor
+  ): Promise<void> {
+
+    await executor.query(
       `
       INSERT INTO ledger_entries (
-        id,
-        account_id,
-        type,
-        amount,
-        created_at
+        id, account_id, type, amount, created_at
       ) VALUES ($1, $2, $3, $4, $5)
       `,
       [

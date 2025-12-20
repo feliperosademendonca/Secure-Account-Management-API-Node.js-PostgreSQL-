@@ -1,13 +1,11 @@
 //./src/domain/finance/types.ts
 
-
-export type TransactionType = "CREDIT" | "DEBIT";
-
-export interface LedgerEntry {
-    id: string;
-    accountId:
-    string;
-    type: TransactionType;
-    amount: number;
-    createdAt: Date;
+export enum TransactionType {
+  CREDIT = "CREDIT",
+  DEBIT = "DEBIT",
+  DEPOSIT ="DEPOSIT",
+  WITHDRAW ="WITHDRAW"
+  
 }
+
+ 

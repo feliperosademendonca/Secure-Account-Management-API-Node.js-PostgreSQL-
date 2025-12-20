@@ -1,7 +1,7 @@
-//./src/domain/finance/entities/LedgerEntry.ts
-
+// src/domain/finance/entities/LedgerEntry.ts
 import { Money } from "../value-objects/Money";
-import type { TransactionType } from "../types";
+import { TransactionType } from "../types";
+import { DomainError } from "../../shared/DomainError";
 
 export class LedgerEntry {
   constructor(
@@ -9,18 +9,18 @@ export class LedgerEntry {
     public readonly accountId: string,
     public readonly type: TransactionType,
     public readonly amount: Money,
-    public readonly createdAt: Date
+    public readonly createdAt: Date = new Date()
   ) {
     this.validate();
   }
 
-  private validate() {
+  private validate(): void {
     if (!this.accountId) {
-      throw new Error("LedgerEntry precisa de accountId");
+      throw new DomainError("LedgerEntry precisa de accountId");
     }
 
     if (!(this.amount instanceof Money)) {
-      throw new Error("Valor inválido para LedgerEntry");
+      throw new DomainError("LedgerEntry exige um Money válido");
     }
   }
 }

@@ -2,6 +2,7 @@
 
 import { LedgerEntry } from "../entities/LedgerEntry";
 import { Money } from "../value-objects/Money";
+import { TransactionType } from "../types";
 
 export function createDeposit(params: {
   id: string;
@@ -15,7 +16,7 @@ export function createDeposit(params: {
   return new LedgerEntry(
     params.id,
     params.accountId,
-    "CREDIT",
+    TransactionType.CREDIT,
     params.amount,
     new Date()
   );
