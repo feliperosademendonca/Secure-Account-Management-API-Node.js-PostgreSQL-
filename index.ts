@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 
 import { app } from "./src/app.js";
 import { createUsersTable } from "./src/database/migrations/createUsersTable.ts";
+import { createLedgerEntriesTable } from "./src/database/migrations/createLedgerEntriesTable.ts";
 import { addRecoveryColumnsToUsers } from "./src/database/migrations/addRecoveryColumnsToUsers.ts";
 
 app.use(cookieParser());
@@ -12,6 +13,7 @@ app.use(cookieParser());
     console.log("▶ Iniciando migrações...");
     await createUsersTable();
     await addRecoveryColumnsToUsers();
+    await createLedgerEntriesTable();
     console.log("✔ Migrações concluídas.");
   } catch (error) {
     console.error("❌ Erro ao executar migrações:", error);

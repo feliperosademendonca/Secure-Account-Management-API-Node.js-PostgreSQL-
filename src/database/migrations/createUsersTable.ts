@@ -13,11 +13,13 @@ export async function createUsersTable() {
       pixKey TEXT UNIQUE,
       cpf TEXT UNIQUE,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
+    );
 
     
   `);
-  
+
+
+
 
   console.log("Tabela 'users' verificada/criada com sucesso");
 }
