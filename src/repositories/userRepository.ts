@@ -1,21 +1,55 @@
 // ./repositories/userRepository.ts
 import { query } from "../database/query";
-import type { UpdateBody } from "../types/bodies";
-import type { User , CreateUserInput } from "../types/user";
+import type { UpdateProfileBody } from "../types/bodies";
+import type { User, CreateUserInput } from "../types/user";
  
+function camelizeUserRow(row: any): User | null {
+  if (!row) return null;
+  return {
+    id: row.id,
+    publicId: row.publicid,          // ← mapeado
+    indicationId: row.indicationid,
+    name: row.name,
+    phone: row.phone,
+    email: row.email,
+    password: row.password,
+    pixKey: row.pixkey,
+    cpf: row.cpf,
+    createdAt: row.createdat,
+    recoveryTokenHash: row.recovery_token_hash,
+    recoveryTokenExpiresAt: row.recovery_token_expires_at,
+    roles: row.roles ?? [],
+  };
+}
+
+
+// Buscar usuário por telefone
+export async function findUserById(id: number) {
+
+  const sql = `
+    SELECT *
+    FROM users
+    WHERE id = $1
+    LIMIT 1
+  `;
+
+  const result = await query<User>(sql, [id]);
+  camelizeUserRow(result)
+  return  camelizeUserRow(result.rows[0])
+}
+
 // Buscar usuário por telefone
 export async function findUserByPhone(phone: string) {
 
-  console.log('\nphone recebido em findUserByPhone:', phone)
-  const sql = `
+   const sql = `
     SELECT *
     FROM users
     WHERE phone = $1
     LIMIT 1
   `;
 
-const result = await query<User>(sql, [phone]);
-   return result.rows[0] || null;
+  const result = await query<User>(sql, [phone]);
+    return result.rows[0] || null;
 }
 
 // Buscar usuário por indicationId
@@ -70,21 +104,11 @@ export async function createUser(data: CreateUserInput) {
 }
 
 // Atualizar usuário pelo ID (JWT)
-export async function updateUserById(  userId: string,  data: UpdateBody) {
+export async function updateUserById(userId: number, data: UpdateProfileBody) {
 
   console.log("\nuserId recebido em updateUserById:", userId);
 
-  if (data.phone) {
-  const existingUser = await findUserByPhone(data.phone);
-console.log("existingUser encontrado com o mesmo telefone:", existingUser);
-  // Converte userId para number
-  const userIdNum = Number(userId);
-console.log("userIdNum convertido:", userIdNum);
-  if (existingUser && existingUser.id !== userIdNum) {
-    throw new Error("Telefone já cadastrado por outro usuário");
-  }
  
-}
   const fields: string[] = [];
   const values: any[] = [];
   let index = 1;
@@ -99,17 +123,20 @@ console.log("userIdNum convertido:", userIdNum);
     values.push(data.phone);
   }
 
-  if (data.password) {
+   if (data.password) {
     fields.push(`password = $${index++}`);
-    values.push(data.password); // ⚠️ deve estar hashada
+    values.push(data.password);
   }
-
+  
   if (fields.length === 0) {
     throw new Error("Nenhum campo para atualizar");
   }
 
   // WHERE sempre por último
   values.push(userId);
+
+  console.log("SQL fields em updateUserById:", fields);
+  console.log("SQL values em updateUserById:", values);
 
   const sql = `
     UPDATE users
@@ -141,7 +168,7 @@ export async function findallUser() {
     FROM users
    `;
 
-  const result = await query <{ id: number }>(sql);
+  const result = await query<{ id: number }>(sql);
 
   const rows = result.rows;
   console.log("row retornado pelo banco em findallUser:", rows);
@@ -151,5 +178,8 @@ export async function findallUser() {
 
   console.log("Resultado do findallUser em findallUser:", rows);
 
-  return {  rows };
+  return { rows };
 }
+
+
+ 

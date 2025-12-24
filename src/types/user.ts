@@ -1,12 +1,18 @@
 export interface User {
   id: number;
   indicationId: string;
+  publicId: string
   name: string;
   phone: string;
   password: string;
   email?: string | null;
   pixKey?: string | null;
   cpf?: string | null;
+  createdAt: Date
+  recoveryTokenHash?:string,
+  recoveryTokenExpiresAt?: string,
+  roles?: string [],
+  
 }
 
 export interface CreateUserInput {
@@ -18,3 +24,5 @@ export interface CreateUserInput {
   pixKey?: string | null;
   cpf?: string | null;
 }
+
+ 

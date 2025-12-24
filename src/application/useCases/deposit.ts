@@ -38,10 +38,7 @@ export class PostgresFinancialRepository implements FinancialRepository {
     );
   }
 
-  async findByAccountIdForUpdate(
-    client: PoolClient,
-    accountId: string
-  ): Promise<LedgerEntry[]> {
+  async findByAccountIdForUpdate(client: PoolClient, accountId: string): Promise<LedgerEntry[]> {
     const { rows } = await client.query<LedgerRow>(
       `
       SELECT id, account_id, type, amount, created_at

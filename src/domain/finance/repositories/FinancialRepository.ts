@@ -3,7 +3,7 @@ import { LedgerEntry } from "../entities/LedgerEntry";
 import type { PoolClient } from "pg";
 
 export interface FinancialRepository {
-  findByAccountId(accountId: string): Promise<LedgerEntry[]>;
+  findByAccountId(accountId: string ): Promise<LedgerEntry[]>;
 
   findByAccountIdForUpdate(
     client: PoolClient,

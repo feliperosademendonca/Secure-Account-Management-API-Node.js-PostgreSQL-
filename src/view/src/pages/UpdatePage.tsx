@@ -28,7 +28,7 @@ const UpdatePage: React.FC = () => {
       confirmPassword,
     };
 
-    const response = await fetch("http://localhost:3000/update", {
+    const response = await fetch("http://localhost:3000/user/update", {
       method: "put",
       headers: { "Content-Type": "application/json" },
       credentials: "include", // 🔥 envia cookie

@@ -1,4 +1,5 @@
 
+// src/infrastructure/postgres/PostgresFinancialRepository.ts
 import type { FinancialRepository } from "../../domain/finance/repositories/FinancialRepository";
 import { LedgerEntry } from "../../domain/finance/entities/LedgerEntry";
 import { Money } from "../../domain/finance/value-objects/Money";

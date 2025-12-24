@@ -6,7 +6,7 @@ import IndexPage from "./pages/IndexPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import RecoveryPage from "./pages/RecoveryPage";
-
+import FinancialPage from "./pages/Financeial";
 import UserLayout from "./pages/User/UserLayout";
 import Profile from "./pages/Profile";
 import Security from "./pages/Security";
@@ -15,8 +15,8 @@ import Logout from "./pages/Logout";
 function App() {
   return (
     <BrowserRouter>
-      
-    <MainMenu />
+
+      <MainMenu />
 
       <Routes>
 
@@ -32,6 +32,7 @@ function App() {
         <Route path="/user" element={<UserLayout />}>
           <Route index element={<Navigate to="profile" />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="finance" element={<FinancialPage />} />
           <Route path="security" element={<Security />} />
         </Route>
 

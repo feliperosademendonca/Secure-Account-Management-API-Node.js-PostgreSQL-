@@ -1,6 +1,6 @@
 //./user.repository.ts
 
-import { pool } from "../../database/connectionNeonPostgreSQL.ts";
+import { pool } from "../../database/connection.ts";
 import type { CreateUserDTO } from "./user.types.ts";
 
 export class UserRepository {

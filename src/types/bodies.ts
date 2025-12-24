@@ -19,6 +19,8 @@ export interface UpdateProfileBody {
   name?: string;
   phone?: string;
   email?: string;
+    password?: string;
+
 }
 
 /** 🔐 Atualização de senha (rota separada) */

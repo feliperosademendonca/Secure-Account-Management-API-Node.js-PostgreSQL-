@@ -5,11 +5,12 @@ import { DomainError } from "../../shared/DomainError";
 
 export class LedgerEntry {
   constructor(
-    public readonly id: string,
-    public readonly accountId: string,
+    public readonly accountId: string,  
     public readonly type: TransactionType,
     public readonly amount: Money,
+    public readonly userId: number,   
     public readonly createdAt: Date = new Date()
+
   ) {
     this.validate();
   }

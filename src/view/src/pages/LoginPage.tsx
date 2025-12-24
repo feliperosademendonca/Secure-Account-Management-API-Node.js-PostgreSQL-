@@ -27,25 +27,27 @@ const LoginPage: React.FC = () => {
     // Exemplo de validação usando o validador importado
 
 
-    const response = await fetch("http://localhost:3000/login", {
+    const response = await fetch("http://localhost:3000/user/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include", // 🔥 obrigatório
       body: JSON.stringify(loginData),
     });
-
-    console.log("Resposta do servidor:", response);
-
+    
+    
+    const data = await response.json(); // ← parse do JSON
+    console.log("Resposta do servidor:", data);
+    
     if (response.ok) {
 
       console.log("\nLogin realizado!");
       setIsLoging(false);
-      setModalMessage("Login realizado!");
+      setModalMessage(data.message);
       setModalOpen(true);
 
     } else {
-      console.error("Erro ao realizar login.");
-      setModalMessage("Erro ao realizar login - verifique os dados informados.");
+      console.error("Erro ao realizar login.", data.error);
+      setModalMessage("Erro ao realizar login: "+  data.error);
       setModalOpen(true);
     }
 

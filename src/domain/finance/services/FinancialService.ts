@@ -1,3 +1,4 @@
+
 // src/domain/finance/services/FinancialService.ts
 import type { FinancialRepository } from "../repositories/FinancialRepository";
 import { LedgerEntry } from "../entities/LedgerEntry";
@@ -11,68 +12,56 @@ import crypto from "crypto";
 import type { PoolClient } from "pg";
 
 export class FinancialService {
-  constructor(
-    private readonly repository: FinancialRepository
-  ) { }
+  constructor(private readonly repository: FinancialRepository) {}
 
   async withdraw(
     client: PoolClient,
     accountId: string,
     amount: Money
   ): Promise<LedgerEntry> {
-    const ledger =
-      await this.repository.findByAccountIdForUpdate(
-        client,
-        accountId
-      );
+    const ledger = await this.repository.findByAccountIdForUpdate(client, accountId);
+    const currentBalance = CalculateBalanceFromLedger.execute(ledger);
 
-    const currentBalance =
-      CalculateBalanceFromLedger.execute(ledger);
-
-    CanWithdrawRule.validate({
-      amount,
-      currentBalance,
-    });
+    CanWithdrawRule.validate({ amount, currentBalance });
 
     const entry = new LedgerEntry(
       crypto.randomUUID(),
       accountId,
-      TransactionType.WITHDRAW,
+      TransactionType.DEBIT,     // ← saque é débito
       amount
     );
 
     await this.repository.save(client, entry);
-
     return entry;
   }
 
   async getBalance(accountId: string): Promise<Money> {
     const ledger = await this.repository.findByAccountId(accountId);
     return CalculateBalanceFromLedger.execute(ledger);
+    
   }
 
-async deposit(
-  client: PoolClient,
-  accountId: string,
-  amount: Money
-): Promise<LedgerEntry> {
-  CanDepositRule.validate(amount);
+  async deposit(
+    client: PoolClient,
+    accountId: string,
+    amount: Money
+  ): Promise<LedgerEntry> {
+    CanDepositRule.validate(amount);
+    
+console.log('money:', amount.amount)
+    const entry = new LedgerEntry(
+      crypto.randomUUID(),
+      accountId,
+      TransactionType.CREDIT,    // ← depósito é crédito
+      amount.amount
+    );
 
-  const entry = new LedgerEntry(
-    crypto.randomUUID(),
-    accountId,
-    TransactionType.DEPOSIT,
-    amount
-  );
+    await this.repository.save(client, entry);
+    return entry;
+  }
 
-  await this.repository.save(client, entry);
-  return entry;
-}
   async getStatement(accountId: string) {
-    const ledger =
-      await this.repository.findByAccountId(accountId);
-
+    const ledger = await this.repository.findByAccountId(accountId);
     return GenerateStatement.execute(ledger);
   }
-
 }

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import type { UpdateProfileBody, UpdatePasswordBody } from "../../../types/bodies"
 import { LoadingButton } from "../components/LoadingButton";
 import Modal from '../components/Modal';
+import {Me} from '../components/Me'
 
 const UpdatePage: React.FC = () => {
     const [name, setName] = useState("");
@@ -41,10 +42,13 @@ const handleSubmit = async (event: React.FormEvent) => {
     body: JSON.stringify(data),
   });
 
+    const dataReceived = await response.json(); // ← parse do JSON
+    console.log('dataReceived', dataReceived)
+    
   if (response.ok) {
-    setModalMessage("Perfil atualizado com sucesso!");
+    setModalMessage( dataReceived.message);
   } else {
-    setModalMessage("Erro ao atualizar perfil.");
+    setModalMessage("Erro ao atualizar perfil."+  dataReceived.message);
   }
 
   setModalOpen(true);
@@ -56,6 +60,7 @@ const handleSubmit = async (event: React.FormEvent) => {
         <div className="container">
             <h2>Update Profile</h2>
 
+            <Me/>
             <form onSubmit={handleSubmit}>
                 <label>
                     Usuário

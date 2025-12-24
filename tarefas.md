@@ -179,3 +179,7 @@ Separar leitura de escrita sem quebrar o domínio
 3️⃣ Idempotência (PIX / webhooks)
 
 Evitar crédito duplicado
+
+|=============================|
+| Validar o fluxo de deposito |
+|=============================|

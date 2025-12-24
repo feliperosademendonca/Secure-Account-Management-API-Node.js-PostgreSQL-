@@ -1,6 +1,6 @@
 // src/pages/SignupPage.tsx
 import React, { useState } from 'react';
- import { LoadingButton } from "../components/LoadingButton";
+import { LoadingButton } from "../components/LoadingButton";
 import Modal from '../components/Modal';
 
 function LogoutPage() {
@@ -14,8 +14,9 @@ function LogoutPage() {
 
 
 
-    const response = await fetch("http://localhost:3000/logout", {
-      method: "GET",
+    const response = await fetch("http://localhost:3000/user/logout", {
+      method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
     });
 
@@ -41,7 +42,7 @@ function LogoutPage() {
 
       <h2>Logout</h2>
       <form onSubmit={handleSubmit}>
-        
+
         <LoadingButton
           type="submit"
           className=""

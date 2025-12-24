@@ -16,6 +16,15 @@ const UserLayout = () => {
           Perfil
         </NavLink>
 
+          <NavLink
+          to="finance"
+          style={({ isActive }) => ({
+            fontWeight: isActive ? "bold" : "normal",
+          })}
+        >
+          Finance
+        </NavLink>
+
         <NavLink
           to="security"
           style={({ isActive }) => ({

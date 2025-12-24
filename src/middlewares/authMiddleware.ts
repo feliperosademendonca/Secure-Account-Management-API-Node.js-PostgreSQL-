@@ -4,11 +4,14 @@ import { authenticateJWT } from "./jwt";
 import { AppError } from "../shared/errors/AppError";
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+   console.log( 'authMiddleware ...')
   try {
-    const user = await authenticateJWT(req);
+    const user = req.user;
+    console.log( 'authMiddleware req.user:', user )
     if (!user) {
       throw new AppError("Não autorizado", 401);
     }
+    
     req.user = user; // adiciona info do usuário na request
     next();
   } catch (err) {

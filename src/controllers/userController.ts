@@ -2,8 +2,7 @@
 import type { Request, Response, NextFunction } from "express";
 import type { SignUpBody, UpdateProfileBody, UpdatePasswordBody, RecoveryBody } from "../types/bodies";
 import type { IUserController } from "../interfaces/IUserController";
-
-import { findUserByPhone, findUserByIndicationId, createUser, updateUserById, findallUser } from "../repositories/userRepository";
+import { findUserByPhone, findUserByIndicationId, createUser, updateUserById, findallUser, findUserById } from "../repositories/userRepository";
 import { signUpSchema, loginSchema, updateProfileSchema, updatePasswordSchema, recoveryUserSchema } from "../validations/inputsValidator";
 import { recoveryAccount } from "../services/recoveryAccount"
 import bcrypt from "bcryptjs";
@@ -49,51 +48,72 @@ export class UserController implements IUserController {
   }
 
   async login(req: Request, res: Response, next: NextFunction): Promise<Response> {
-    console.log("loginController req.body:", req.body);
 
     try {
-      // ✅ Validação do input
       const data = loginSchema.parse(req.body);
       const { phone, password } = data;
 
-      // 🔍 Busca usuário
       const user = await findUserByPhone(phone);
+      if (!user) return res.status(401).json({ success: false, error: "Credenciais inválidas" });
 
-      // ❌ Usuário não existe
-      if (!user) {
-        return res.status(401).json({ error: "Credenciais inválidas" });
-      }
-
-      // 🔐 Valida senha
       const isValid = await bcrypt.compare(password, user.password);
+      if (!isValid) return res.status(401).json({ success: false, error: "Credenciais inválidas" });
 
-      if (!isValid) {
-        return res.status(401).json({ error: "Credenciais inválidas" });
-      }
+      // ✅ payload com publicId (UUID) + id numérico (opcional)
+      const payload = {
+        publicId: user.publicId,  // UUID de users.publicId
+        id: user.id,              // opcional (interno)
+        name: user.name           // opcional
+      };
 
-      // 🔐 Gera token
-      const token = jwt.sign(
-        { id: user.id },
-        process.env.JWT_SECRET!,
-        { expiresIn: "1h" }
-      );
+      // ✅ assinar com o payload completo
+      const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: "1h" });
 
-      // 🍪 Armazena token de forma segura
       res.cookie("token", token, {
-        httpOnly: true,           // ✅ proteção XSS
+        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         maxAge: 60 * 60 * 1000,
       });
 
       return res.status(200).json({
+        success:true,
         message: "Login realizado com sucesso",
         id: user.id,
+        publicId: user.publicId,
+      });
+
+    } catch (err) {
+      console.log('loginController err catch ', err)
+      return res.status(401).json({
+        message: 'Usuário não autorizado',
+      });
+    }
+  }
+
+  async listUser(req: Request, res: Response, next: NextFunction): Promise<Response> {
+    console.log("listUserController:", req.user?.id);
+
+    try {
+      const userId = req.user!.id;
+
+
+
+      const user = await findUserById(userId);
+      console.log('user encontrado em listUserController:', user);
+      // ❌ Usuário não existe
+      if (!user) {
+        return res.status(401).json({ error: "Nenhum usuário encontrado" });
+      }
+
+
+      return res.status(200).json({
+        user: user,
       });
     } catch (err) {
       next(err);
     }
-    return res.json({ token: "jwt_token" });
+    return res.json([]);
   }
 
   async updateProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -119,7 +139,8 @@ export class UserController implements IUserController {
 
       const { password } = req.validatedBody as UpdatePasswordBody;
 
-      const passwordHash = await bcrypt.hash(password, 10);
+      const passwordHash: string = await bcrypt.hash(password, 10);
+      console.log('passwordHash em updatePasswordController:', typeof (passwordHash));
 
       await updateUserById(userId, { password: passwordHash });
 
@@ -172,12 +193,13 @@ export class UserController implements IUserController {
   }
 
   async logout(req: Request, res: Response): Promise<Response> {
+    console.log('acessou o logout...')
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
-    return res.status(204).send();
+    return res.status(204).send('logout realizado');
   }
 }
 
