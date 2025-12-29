@@ -1,7 +1,5 @@
 1️⃣ Banco de Dados Overpower
 
-Vamos criar uma estrutura de tabelas profissional:
-
 Tabela users
 
 id (uuid)

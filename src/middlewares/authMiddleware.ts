@@ -7,8 +7,9 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
    console.log( 'authMiddleware ...')
   try {
     const user = req.user;
-    console.log( 'authMiddleware req.user:', user )
+    //console.log( 'authMiddleware req.user:', user )
     if (!user) {
+       console.log( "Não autorizado", 401)
       throw new AppError("Não autorizado", 401);
     }
     

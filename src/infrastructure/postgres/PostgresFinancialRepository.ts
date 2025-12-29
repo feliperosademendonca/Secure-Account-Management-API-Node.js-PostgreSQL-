@@ -9,6 +9,7 @@ import { pool } from "../../database/query";
 
 type LedgerRow = {
   id: string;
+  transaction_id: string;
   account_id: string;
   type: TransactionType;
   amount: number;
@@ -19,7 +20,7 @@ export class PostgresFinancialRepository implements FinancialRepository {
   async findByAccountId(accountId: string): Promise<LedgerEntry[]> {
     const { rows } = await pool.query<LedgerRow>(
       `
-      SELECT id, account_id, type, amount, created_at
+      SELECT id, transaction_id, account_id, type, amount, created_at
       FROM ledger_entries
       WHERE account_id = $1
       ORDER BY created_at ASC
@@ -31,6 +32,7 @@ export class PostgresFinancialRepository implements FinancialRepository {
       (row) =>
         new LedgerEntry(
           row.id,
+          row.transaction_id,
           row.account_id,
           row.type,
           new Money(row.amount),
@@ -39,13 +41,10 @@ export class PostgresFinancialRepository implements FinancialRepository {
     );
   }
 
-  async findByAccountIdForUpdate(
-    client: PoolClient,
-    accountId: string
-  ): Promise<LedgerEntry[]> {
+  async findByAccountIdForUpdate(client: PoolClient, accountId: string): Promise<LedgerEntry[]> {
     const { rows } = await client.query<LedgerRow>(
       `
-      SELECT id, account_id, type, amount, created_at
+      SELECT id, transaction_id, account_id, type, amount, created_at
       FROM ledger_entries
       WHERE account_id = $1
       ORDER BY created_at ASC
@@ -58,6 +57,7 @@ export class PostgresFinancialRepository implements FinancialRepository {
       (row) =>
         new LedgerEntry(
           row.id,
+          row.transaction_id,
           row.account_id,
           row.type,
           new Money(row.amount),
@@ -69,15 +69,15 @@ export class PostgresFinancialRepository implements FinancialRepository {
   async save(client: PoolClient, entry: LedgerEntry): Promise<void> {
     await client.query(
       `
-      INSERT INTO ledger_entries (id, account_id, type, amount, created_at)
+      INSERT INTO ledger_entries (id, transaction_id, account_id, type, amount)
       VALUES ($1, $2, $3, $4, $5)
       `,
       [
         entry.id,
+        entry.transactionId,
         entry.accountId,
         entry.type,
         entry.amount.amount,
-        entry.createdAt,
       ]
     );
   }

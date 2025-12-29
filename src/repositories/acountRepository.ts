@@ -1,61 +1,52 @@
 // ./repositories/userRepository.ts
 import { query } from "../database/query";
 import type { UpdateProfileBody } from "../types/bodies";
-import type { User, CreateUserInput } from "../types/user";
+import type { Account } from "../types/Account";
  
-function camelizeUserRow(row: any): User | null {
+function camelizeUserRow(row: any): Account | null {
   if (!row) return null;
   return {
     id: row.id,
-    publicId: row.publicid,          // ← mapeado
-    indicationId: row.indicationid,
-    name: row.name,
-    phone: row.phone,
-    email: row.email,
-    password: row.password,
-    pixKey: row.pixkey,
-    cpf: row.cpf,
-    createdAt: row.createdat,
-    recoveryTokenHash: row.recovery_token_hash,
-    recoveryTokenExpiresAt: row.recovery_token_expires_at,
-    roles: row.roles ?? [],
+    userId: row.publicid,          // ← mapeado
+    currency: row.currency, 
+    createdAt: row.createdat, 
   };
 }
-
+ 
 // Buscar usuário por telefone
-export async function findUserById(id: number) {
+export async function findAccountById(id: number) {
 
   const sql = `
     SELECT *
-    FROM users
+    FROM account
     WHERE id = $1
     LIMIT 1
   `;
 
-  const result = await query<User>(sql, [id]);
+  const result = await query<Account>(sql, [id]);
   camelizeUserRow(result)
   return  camelizeUserRow(result.rows[0])
 }
 
 // Buscar usuário por telefone
-export async function findUserByPhone(phone: string) {
+export async function findAccountByPhone(phone: string) {
 
    const sql = `
     SELECT *
-    FROM users
+    FROM accounts
     WHERE phone = $1
     LIMIT 1
   `;
 
-  const result = await query<User>(sql, [phone]);
+  const result = await query<Account>(sql, [phone]);
     return result.rows[0] || null;
 }
 
 // Buscar usuário por indicationId
-export async function findUserByIndicationId(indicationId: string) {
+export async function findAccountByIndicationId(indicationId: string) {
   const sql = `
     SELECT *
-    FROM users
+    FROM accounts
     WHERE indicationId = $1
     LIMIT 1
   `;
@@ -65,7 +56,7 @@ export async function findUserByIndicationId(indicationId: string) {
 }
 
 // Criar usuário
-export async function createUser(data: CreateUserInput) {
+export async function createAccount(data: CreateAccountInput) {
   const {
     indicationId,
     name,
@@ -77,7 +68,7 @@ export async function createUser(data: CreateUserInput) {
   } = data;
 
   const sql = `
-    INSERT INTO users (indicationId, name, phone, email, password, pixKey, cpf)
+    INSERT INTO accounts (indicationId, name, phone, email, password, pixKey, cpf)
     VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING id
   `;
@@ -103,9 +94,9 @@ export async function createUser(data: CreateUserInput) {
 }
 
 // Atualizar usuário pelo ID (JWT)
-export async function updateUserById(userId: number, data: UpdateProfileBody) {
+export async function updateAccountById(userId: number, data: UpdateProfileBody) {
 
-  console.log("\nuserId recebido em updateUserById:", userId);
+  console.log("\nAccount recebido em updateUserById:", userId);
 
  
   const fields: string[] = [];
@@ -134,11 +125,11 @@ export async function updateUserById(userId: number, data: UpdateProfileBody) {
   // WHERE sempre por último
   values.push(userId);
 
-  console.log("SQL fields em updateUserById:", fields);
-  console.log("SQL values em updateUserById:", values);
+  console.log("SQL fields em updateaccountById:", fields);
+  console.log("SQL values em updateaccountById:", values);
 
   const sql = `
-    UPDATE users
+    UPDATE accounts
     SET ${fields.join(", ")}
     WHERE id = $${index}
     RETURNING id
@@ -147,35 +138,35 @@ export async function updateUserById(userId: number, data: UpdateProfileBody) {
   const result = await query<{ id: number }>(sql, values);
 
   const row = result.rows[0];
-  console.log("row retornado pelo banco em updateUserById:", row);
+  console.log("row retornado pelo banco em updateaccountById:", row);
   if (!row) {
-    throw new Error("Usuário não encontrado");
+    throw new Error("Conta não encontrado");
   }
 
-  console.log("Resultado do update em updateUserById:", row);
+  console.log("Resultado do update em updateaccountById:", row);
 
   return { id: row.id };
 }
 
 // Atualizar usuário pelo ID (JWT)
-export async function findallUser() {
+export async function findallAccount() {
 
-  console.log("findallUser");
+  console.log("findallAccounts");
 
   const sql = `
     SELECT *
-    FROM users
+    FROM accounts
    `;
 
   const result = await query<{ id: number }>(sql);
 
   const rows = result.rows;
-  console.log("row retornado pelo banco em findallUser:", rows);
+  console.log("row retornado pelo banco em findallAccounts:", rows);
   if (!rows) {
-    throw new Error("Usuários não encontrado");
+    throw new Error("Contas não encontrado");
   }
 
-  console.log("Resultado do findallUser em findallUser:", rows);
+  console.log("Resultado findallAccounts:", rows);
 
   return { rows };
 }

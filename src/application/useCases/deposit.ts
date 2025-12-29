@@ -70,7 +70,7 @@ export class PostgresFinancialRepository implements FinancialRepository {
       `,
       [
         entry.id,
-        entry.accountId,
+        entry.account_Id,
         entry.type,
         entry.amount.amount,
         entry.createdAt,

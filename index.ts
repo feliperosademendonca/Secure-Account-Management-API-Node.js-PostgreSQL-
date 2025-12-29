@@ -4,6 +4,9 @@ import cookieParser from "cookie-parser";
 import { app } from "./src/app.js";
 import { createUsersTable } from "./src/database/migrations/createUsersTable.ts";
 import { createLedgerEntriesTable } from "./src/database/migrations/createLedgerEntriesTable.ts";
+import { removeUserIdFromLedgerEntries } from "./src/database/migrations/removeLedgerEntriesTable.ts";
+import { createAccountsTable } from "./src/database/migrations/createAccountsTable.ts";
+
 import { up } from "./src/database/migrations/addRecoveryColumnsToUsers.ts";
 
 app.use(cookieParser());
@@ -14,6 +17,8 @@ app.use(cookieParser());
     await createUsersTable();
     await up();
     await createLedgerEntriesTable();
+    await createAccountsTable();
+    await removeUserIdFromLedgerEntries();
     console.log("✔ Migrações concluídas.");
   } catch (error) {
     console.error("❌ Erro ao executar migrações:", error);

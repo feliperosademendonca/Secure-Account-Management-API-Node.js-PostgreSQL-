@@ -1,4 +1,4 @@
-//./src\database\migrations\createUsersTable.ts
+// src/database/migrations/createLedgerEntriesTable.ts
 import { query } from "../query";
 
 export async function createLedgerEntriesTable() {
@@ -9,12 +9,14 @@ export async function createLedgerEntriesTable() {
       type VARCHAR(20) NOT NULL
         CHECK (type IN ('CREDIT', 'DEBIT', 'DEPOSIT', 'WITHDRAW')),
       amount BIGINT NOT NULL,
-      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       CONSTRAINT fk_ledger_account
         FOREIGN KEY (account_id)
         REFERENCES accounts(id)
     );
   `);
 
-  console.log("Tabela 'ledger_entries' verificada/criada com sucesso");
+  console.log("Tabela 'ledger_entries' criada/verificada com sucesso");
 }
+
+ 

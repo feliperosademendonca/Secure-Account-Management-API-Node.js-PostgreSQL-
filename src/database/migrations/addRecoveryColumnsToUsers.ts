@@ -6,26 +6,32 @@ export async function up() {
   await query(`
     BEGIN;
 
-    -- Extensão para gerar UUIDs
+    -- 1) Extensão para gerar UUIDs (gen_random_uuid)
     CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-     ALTER TABLE users
-    ALTER COLUMN publicId SET DEFAULT gen_random_uuid();
+    -- 2) Adicionar a coluna se não existir, já com DEFAULT
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'publicid'
+      ) THEN
+        ALTER TABLE users
+          ADD COLUMN publicId UUID DEFAULT gen_random_uuid();
+      END IF;
+    END $$;
 
-    -- Adicionar a coluna publicId se não existir
-    ALTER TABLE users
-      ADD COLUMN IF NOT EXISTS publicId UUID;
-
-    -- Preencher linhas existentes com UUID
+    -- 3) Preencher linhas antigas que ficaram NULL
     UPDATE users
       SET publicId = gen_random_uuid()
       WHERE publicId IS NULL;
 
-    -- Tornar NOT NULL
+    -- 4) Tornar NOT NULL (só depois de garantir que não há NULL)
     ALTER TABLE users
       ALTER COLUMN publicId SET NOT NULL;
 
-    -- Criar índice único (agora a coluna existe)
+    -- 5) Índice único
     CREATE UNIQUE INDEX IF NOT EXISTS users_publicId_uidx ON users(publicId);
 
     COMMIT;
