@@ -1,10 +1,10 @@
 //./src\database\withTransaction.ts
 
-import type { DbExecutor } from "./DbExecutor";
-import { pool } from "./query";
+import type { DbExecutor , } from "./DbExecutor";
+ import { pool } from "./query";
 
 export async function withTransaction<T>(
-  fn: (executor: DbExecutor) => Promise<T>
+  fn: (executor: DbExecutor  ) => Promise<T>
 ): Promise<T> {
   const client = await pool.connect();
 

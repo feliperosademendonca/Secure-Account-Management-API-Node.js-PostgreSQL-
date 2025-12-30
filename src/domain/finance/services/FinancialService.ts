@@ -10,11 +10,16 @@ import { CanWithdrawRule } from "../rules/CanWithdrawRule";
 import { CanDepositRule } from "../rules/CanDepositRule";
 import { CalculateBalanceFromLedger } from "../rules/CalculateBalanceFromLedger";
 import { GenerateStatement } from "../rules/GenerateStatement";
+import type { DbExecutor } from "../../../database/DbExecutor";
 
 export class FinancialService {
   constructor(private readonly repository: FinancialRepository) { }
 
-  async deposit(client: PoolClient, accountId: string, amount: Money): Promise<LedgerEntry> {
+  async deposit(
+    executor: DbExecutor,
+    accountId: string,
+    amount: Money
+  ): Promise<LedgerEntry> {
     CanDepositRule.validate(amount);
 
     const entry = new LedgerEntry(
@@ -24,24 +29,23 @@ export class FinancialService {
       amount,
     );
 
-    await this.repository.save(client, entry);
+    await this.repository.save( executor, entry,)
     return entry;
   }
 
-  async withdraw(client: PoolClient, accountId: string, amount: Money): Promise<LedgerEntry> {
-    const ledger = await this.repository.findByAccountIdForUpdate(client, accountId);
+  async withdraw(    executor: DbExecutor, accountId: string, amount: Money): Promise<LedgerEntry> {
+    const ledger = await this.repository.findByAccountIdForUpdate(executor, accountId);
     const currentBalance = CalculateBalanceFromLedger.execute(ledger);
     CanWithdrawRule.validate({ amount, currentBalance });
 
     const entry = new LedgerEntry(
       crypto.randomUUID(),
-      crypto.randomUUID(),
       accountId,
-      TransactionType.DEBIT,
+       TransactionType.DEBIT,
       amount
     );
 
-    await this.repository.save(client, entry);
+        await this.repository.save( executor,entry,)
     return entry;
   }
 
@@ -57,4 +61,3 @@ export class FinancialService {
     return GenerateStatement.execute(ledger);
   }
 }
- 

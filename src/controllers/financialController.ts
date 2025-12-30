@@ -9,15 +9,16 @@ import { withTransaction } from "../database/withTransaction.ts";
 const repository = new PostgresFinancialRepository();
 const financialService = new FinancialService(repository);
 
-export async function depositController(
-  req: Request,
-  res: Response
-) {
+export async function depositController(req: Request,  res: Response) {
+
+  console.log('req.body:', req.body)
   if (!req.user) {
     return res.status(401).json({ error: "Usuário não autenticado" });
   }
-console.log('user',req.user)
-  const amount = new Money(Number(req.body.amount));
+  console.log('user', req.user)
+
+  const amount = Money.fromCents(Number(req.body.amount));
+  console.log('depositController amount', amount)
 
   const entry = await withTransaction(async (executor) => {
     return financialService.deposit(
@@ -27,12 +28,13 @@ console.log('user',req.user)
     );
   });
 
+  console.log('return entry:',entry)
+  
   return res.status(201).json({
     message: "Depósito realizado com sucesso",
     entry,
   });
 }
-
 export async function withdrawController(
   req: Request,
   res: Response
@@ -41,12 +43,12 @@ export async function withdrawController(
     return res.status(401).json({ error: "Usuário não autenticado" });
   }
 
-  const amount = new Money(Number(req.body.amount));
+  const amount = Money.fromCents(Number(req.body.amount));
 
   const entry = await withTransaction(async (executor) => {
     return financialService.withdraw(
       executor,
-      req.user!.id,
+      req.user!.publicId,
       amount
     );
   });
@@ -69,6 +71,6 @@ export async function balanceController(
   const balance = await financialService.getBalance(req.user.publicId);
 
   return res.json({
-    balance: balance.amount,
+    balance: balance.toReais,
   });
 }

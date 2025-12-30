@@ -8,11 +8,12 @@ import { pool } from "../../database/query";
 
 type LedgerRow = {
   id: string;
-  user_Id: number;
+  account_id: string;
   type: TransactionType;
-  amount: Money;
+  amount: number; // BIGINT → number
   created_at: Date;
 };
+
 
 export class PostgresFinancialRepository implements FinancialRepository {
 
@@ -28,7 +29,7 @@ export class PostgresFinancialRepository implements FinancialRepository {
       [accountId]
     );
 
-    return rows.map(
+   return rows.map(
   (row) =>
     new LedgerEntry(
       row.id,
@@ -38,6 +39,7 @@ export class PostgresFinancialRepository implements FinancialRepository {
       row.created_at
     )
 );
+
 
   }
 
@@ -69,10 +71,10 @@ export class PostgresFinancialRepository implements FinancialRepository {
   }
 
   async save(client: PoolClient, entry: LedgerEntry): Promise<void> {
-console.log('em save entry', entry)
- 
-  await client.query(
-  `
+    console.log('em save entry', entry.amount.toCents())
+
+    await client.query(
+      `
   INSERT INTO ledger_entries (
     id,
     account_id,
@@ -82,14 +84,14 @@ console.log('em save entry', entry)
   )
   VALUES ($1, $2, $3, $4, $5)
   `,
-  [
-    entry.transactionId,
-    entry.accountId,
-    entry.type,
-    entry.amount.amount,
-    entry.createdAt,
-  ]
-);
+      [
+        entry.transactionId,
+        entry.accountId,
+        entry.type,
+        entry.amount.toCents(),
+        entry.createdAt,
+      ]
+    );
 
   }
 }
